@@ -1,0 +1,17 @@
+### Login
+POST http://192.168.87.35:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "appdev@test.com",
+    "password": "asdf1234"
+}
+
+### Register
+POST http://192.168.87.35:3000/auth/register
+Content-Type: application/json
+
+{
+    "email": "appdev@test.com",
+    "password": "asdf1234"
+}

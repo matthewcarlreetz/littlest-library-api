@@ -1,56 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { Library, Prisma } from '@prisma/client';
+import { CreateLibraryDto } from './dto/create-library.dto';
+import { UpdateLibraryDto } from './dto/update-library.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { Library } from './entities/library.entity';
 
 @Injectable()
 export class LibraryService {
   constructor(private prisma: PrismaService) {}
 
-  async library(
-    libraryWhereUniqueInput: Prisma.LibraryWhereUniqueInput,
-  ): Promise<Library | null> {
+  async findOne(id: string): Promise<Library | null> {
     return this.prisma.library.findUnique({
-      where: libraryWhereUniqueInput,
+      where: { id },
     });
   }
 
-  async libraries(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.LibraryWhereUniqueInput;
-    where?: Prisma.LibraryWhereInput;
-    orderBy?: Prisma.LibraryOrderByWithRelationInput;
-  }): Promise<Library[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.library.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
+  async findAll(): Promise<Library[]> {
+    return this.prisma.library.findMany();
   }
 
-  async createLibrary(data: Prisma.LibraryCreateInput): Promise<Library> {
-    return this.prisma.library.create({
-      data,
-    });
-  }
-
-  async updateLibrary(params: {
-    where: Prisma.LibraryWhereUniqueInput;
-    data: Prisma.LibraryUpdateInput;
+  async update(params: {
+    id: string;
+    data: UpdateLibraryDto;
   }): Promise<Library> {
-    const { data, where } = params;
+    const { data, id } = params;
     return this.prisma.library.update({
       data,
-      where,
+      where: { id },
     });
   }
 
-  async deleteLibrary(where: Prisma.LibraryWhereUniqueInput): Promise<Library> {
+  async remove(id: string): Promise<Library> {
     return this.prisma.library.delete({
-      where,
+      where: { id },
+    });
+  }
+
+  create(data: CreateLibraryDto): Promise<Library> {
+    return this.prisma.library.create({
+      data,
     });
   }
 }

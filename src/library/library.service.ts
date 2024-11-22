@@ -3,6 +3,7 @@ import { CreateLibraryDto } from './dto/create-library.dto';
 import { UpdateLibraryDto } from './dto/update-library.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Library } from './entities/library.entity';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class LibraryService {
@@ -35,9 +36,25 @@ export class LibraryService {
     });
   }
 
-  create(data: CreateLibraryDto): Promise<Library> {
+  create({
+    library,
+    user,
+    image,
+  }: {
+    library: CreateLibraryDto;
+    user: User;
+    image: Express.Multer.File;
+  }): Promise<Library> {
+    // TODO: Generate name based on uuid (angry purple tiger)
+    // Save image to s3,
+    // Add imageUrl, description, address, etc to LibraryContent
+
+    console.log({ user, image: !!image });
+
+    const name = 'todo';
+
     return this.prisma.library.create({
-      data,
+      data: { lat: library.lat, lng: library.lng, name, creatorId: user.id },
     });
   }
 }

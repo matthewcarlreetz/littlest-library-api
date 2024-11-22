@@ -1,3 +1,1 @@
-import { Prisma } from '@prisma/client';
-
-export type CreateLibraryDto = Prisma.LibraryCreateInput;
+export type CreateLibraryDto = { lat: number; lng: number; tags: string[] };

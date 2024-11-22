@@ -1,3 +1,17 @@
-import { Prisma } from '@prisma/client';
+import { IsNotEmpty, IsNumber } from 'class-validator';
+import { Transform } from 'class-transformer';
 
-export type CreateLibraryDto = Prisma.LibraryCreateInput;
+export class CreateLibraryDto {
+  @IsNotEmpty()
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value))
+  lat: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value))
+  lng: number;
+
+  // TODO: add validation for tags
+  tags: string[];
+}

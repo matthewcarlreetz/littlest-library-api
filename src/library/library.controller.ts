@@ -6,18 +6,31 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { LibraryService } from './library.service';
 import { CreateLibraryDto } from './dto/create-library.dto';
 import { UpdateLibraryDto } from './dto/update-library.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { User } from '../auth/decorators/user.decorator';
 
 @Controller('library')
 export class LibraryController {
   constructor(private readonly libraryService: LibraryService) {}
 
   @Post()
-  create(@Body() createLibraryDto: CreateLibraryDto) {
-    return this.libraryService.create(createLibraryDto);
+  @UseInterceptors(FileInterceptor('file'))
+  create(
+    @Body() createLibraryDto: CreateLibraryDto,
+    @UploadedFile() image: Express.Multer.File,
+    @User() user,
+  ) {
+    return this.libraryService.create({
+      library: createLibraryDto,
+      user,
+      image,
+    });
   }
 
   @Get()

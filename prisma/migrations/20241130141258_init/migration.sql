@@ -10,10 +10,9 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Library" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
     "lat" DECIMAL(65,30) NOT NULL,
     "lng" DECIMAL(65,30) NOT NULL,
-    "creatorId" INTEGER,
+    "creatorId" INTEGER NOT NULL,
 
     CONSTRAINT "Library_pkey" PRIMARY KEY ("id")
 );
@@ -29,7 +28,7 @@ CREATE TABLE "LibraryContent" (
     "street" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "zip" TEXT NOT NULL,
-    "authorId" INTEGER,
+    "authorId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -40,10 +39,10 @@ CREATE TABLE "LibraryContent" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- AddForeignKey
-ALTER TABLE "Library" ADD CONSTRAINT "Library_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Library" ADD CONSTRAINT "Library_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "LibraryContent" ADD CONSTRAINT "LibraryContent_libraryId_fkey" FOREIGN KEY ("libraryId") REFERENCES "Library"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LibraryContent" ADD CONSTRAINT "LibraryContent_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "LibraryContent" ADD CONSTRAINT "LibraryContent_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

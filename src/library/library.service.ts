@@ -5,10 +5,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Library } from './entities/library.entity';
 import { User } from '@prisma/client';
 import haversineDistance from '../app/utils/haversineDistance';
+import { OpenAIClientService } from '../app/openAiClient/openAiClient.service';
 
 @Injectable()
 export class LibraryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private openAiClient: OpenAIClientService,
+  ) {}
 
   async findOne(id: string): Promise<Library | null> {
     return this.prisma.library.findUnique({
@@ -44,17 +48,15 @@ export class LibraryService {
   }: {
     library: CreateLibraryDto;
     user: User;
-    image: Express.Multer.File;
+    image?: Express.Multer.File;
   }): Promise<Library> {
     // TODO:
+    // Rate limit a user to X libraries per day
     // Verify this location doesn't already exist ✔️
+    // Check with OpenAi api that the image contains a library and nothing inappropriate, generate a description ✔
     // Lookup street address
-    // Check with MS api that the image contains a library and nothing inappropriate
-    // Generate a description from ChatGPT api
     // Save image to s3
     // Add to db
-
-    console.log({ user, image: !!image });
 
     const geoOffset = 0.00002; // A crude lat/lng offset to check for duplicates. At the equator, this is about 73 feet.
 
@@ -80,12 +82,32 @@ export class LibraryService {
       throw new HttpException('Library already exists', HttpStatus.CONFLICT);
     }
 
-    return this.prisma.library.create({
+    const description = await this.openAiClient.createLibraryDescription({
+      image,
+      tags: library.tags,
+    });
+
+    const createdLibrary = await this.prisma.library.create({
       data: {
         lat: library.lat,
         lng: library.lng,
         creatorId: user.id,
       },
     });
+
+    await this.prisma.libraryContent.create({
+      data: {
+        libraryId: createdLibrary.id,
+        title: '',
+        description,
+        imageUrl: '',
+        street: '',
+        state: '',
+        zip: '',
+        authorId: user.id,
+      },
+    });
+
+    return createdLibrary;
   }
 }

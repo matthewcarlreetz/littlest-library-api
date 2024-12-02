@@ -13,5 +13,5 @@ export class CreateLibraryDto {
   lng: number;
 
   // TODO: add validation for tags
-  tags: string[];
+  tags: string;
 }

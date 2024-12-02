@@ -9,6 +9,7 @@ import { JwtGuard } from '../auth/guards/jwt.guard';
 import { JwtStrategy } from '../auth/strategy/jwt.strategy';
 import { AppLoggerMiddleware } from '../middleware/applogger.middleware';
 import { LibraryModule } from '../library/library.module';
+import { OpenAIModule } from './openAiClient/openAiClient.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { LibraryModule } from '../library/library.module';
     UserModule,
     AuthModule,
     LibraryModule,
+    OpenAIModule,
   ],
   controllers: [AppController],
   providers: [

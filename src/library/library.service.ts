@@ -18,33 +18,6 @@ export class LibraryService {
     private imageUpload: ImageUploadService,
   ) {}
 
-  async findOne(id: string): Promise<Library | null> {
-    return this.prisma.library.findUnique({
-      where: { id },
-    });
-  }
-
-  async findAll(): Promise<Library[]> {
-    return this.prisma.library.findMany();
-  }
-
-  async update(params: {
-    id: string;
-    data: UpdateLibraryDto;
-  }): Promise<Library> {
-    const { data, id } = params;
-    return this.prisma.library.update({
-      data,
-      where: { id },
-    });
-  }
-
-  async remove(id: string): Promise<Library> {
-    return this.prisma.library.delete({
-      where: { id },
-    });
-  }
-
   async create({
     library,
     user,
@@ -54,14 +27,7 @@ export class LibraryService {
     user: User;
     image?: Express.Multer.File;
   }): Promise<Library> {
-    // TODO:
-    // Rate limit a user to X libraries per day
-    // Verify this location doesn't already exist ✔️
-    // Check with OpenAi api that the image contains a library and nothing inappropriate, generate a description ✔
-    // Lookup street address ✔️
-    // Save image to s3
-    // Add to db ✔️
-
+    // TODO: Rate limit a user to X libraries per day
     const geoOffset = 0.00002; // A crude lat/lng offset to check for duplicates. At the equator, this is about 73 feet.
 
     const existingLibraries = await this.prisma.library.findMany({

@@ -37,15 +37,7 @@ export class GeocodingService {
   }: {
     lat: number;
     lng: number;
-  }): Promise<
-    | {
-        street: string | undefined;
-        city: string | undefined;
-        state: string | undefined;
-        zip: string | undefined;
-      }
-    | undefined
-  > {
+  }): Promise<AddressComponents | undefined> {
     const feature = await this.reverseGeocode({ lat, lng });
     if (!feature) return;
 
@@ -123,4 +115,11 @@ export type ItemContext = {
   wikidata_id?: string;
   country_code?: string;
   country_code_alpha_3?: string;
+};
+
+export type AddressComponents = {
+  street: string | undefined;
+  city: string | undefined;
+  state: string | undefined;
+  zip: string | undefined;
 };

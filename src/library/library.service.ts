@@ -4,9 +4,10 @@ import { UpdateLibraryDto } from './dto/update-library.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Library } from './entities/library.entity';
 import { User } from '@prisma/client';
-import haversineDistance from '../app/utils/haversineDistance';
-import { OpenAIClientService } from '../app/openAiClient/openAiClient.service';
-import { GeocodingService } from '../app/geocoding/geocoding.service';
+import haversineDistance from '../utils/haversineDistance';
+import { OpenAIClientService } from '../openAiClient/openAiClient.service';
+import { GeocodingService } from '../geocoding/geocoding.service';
+import { ImageUploadService } from '../imageUpload/imageUpload.service';
 
 @Injectable()
 export class LibraryService {
@@ -14,6 +15,7 @@ export class LibraryService {
     private prisma: PrismaService,
     private openAiClient: OpenAIClientService,
     private geocoder: GeocodingService,
+    private imageUpload: ImageUploadService,
   ) {}
 
   async findOne(id: string): Promise<Library | null> {
@@ -94,6 +96,11 @@ export class LibraryService {
       lng: library.lng,
     });
 
+    const imageUrl = await this.imageUpload.uploadImage(
+      image,
+      addressComponents,
+    );
+
     const createdLibrary = await this.prisma.library.create({
       data: {
         lat: library.lat,
@@ -106,7 +113,7 @@ export class LibraryService {
       data: {
         libraryId: createdLibrary.id,
         description,
-        imageUrl: '',
+        imageUrl,
         street: addressComponents?.street,
         state: addressComponents?.state,
         city: addressComponents?.city,

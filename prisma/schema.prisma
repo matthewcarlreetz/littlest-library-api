@@ -29,11 +29,11 @@ model LibraryContent {
   library     Library  @relation(fields: [libraryId], references: [id])
   libraryId   String
   status      String   @default("new")
-  title       String
   description String
   imageUrl    String
   street      String
   state       String
+  city        String
   zip         String
   author      User     @relation(fields: [authorId], references: [id])
   authorId    Int

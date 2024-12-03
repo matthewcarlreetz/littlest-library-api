@@ -10,6 +10,7 @@ import { JwtStrategy } from '../auth/strategy/jwt.strategy';
 import { AppLoggerMiddleware } from '../middleware/applogger.middleware';
 import { LibraryModule } from '../library/library.module';
 import { OpenAIModule } from './openAiClient/openAiClient.module';
+import { GeocodingModule } from './geocoding/geocoding.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { OpenAIModule } from './openAiClient/openAiClient.module';
     AuthModule,
     LibraryModule,
     OpenAIModule,
+    GeocodingModule,
   ],
   controllers: [AppController],
   providers: [

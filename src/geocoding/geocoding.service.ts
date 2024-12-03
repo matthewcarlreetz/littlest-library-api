@@ -76,9 +76,9 @@ export type Properties = {
   feature_type: string;
   full_address: string;
   name: string;
-  name_preferred: string;
-  coordinates: Coordinates;
-  place_formatted: string;
+  name_preferred?: string;
+  coordinates?: Coordinates;
+  place_formatted?: string;
   context: Context;
 };
 

@@ -9,8 +9,8 @@ import { JwtGuard } from '../auth/guards/jwt.guard';
 import { JwtStrategy } from '../auth/strategy/jwt.strategy';
 import { AppLoggerMiddleware } from '../middleware/applogger.middleware';
 import { LibraryModule } from '../library/library.module';
-import { OpenAIModule } from '../openAiClient/openAiClient.module';
-import { GeocodingModule } from '../geocoding/geocoding.module';
+import { OpenAIModule } from 'utils/openAiClient/openAiClient.module';
+import { GeocodingModule } from 'utils/geocoding/geocoding.module';
 
 @Module({
   imports: [

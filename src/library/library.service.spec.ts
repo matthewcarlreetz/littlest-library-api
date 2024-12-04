@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LibraryService } from './library.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { OpenAIClientService } from '../openAiClient/openAiClient.service';
-import { GeocodingService } from '../geocoding/geocoding.service';
-import { ImageUploadService } from '../imageUpload/imageUpload.service';
+import { PrismaService } from 'utils/prisma/prisma.service';
+import { OpenAIClientService } from 'utils/openAiClient/openAiClient.service';
+import { GeocodingService } from 'utils/geocoding/geocoding.service';
+import { ImageUploadService } from 'utils/imageUpload/imageUpload.service';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 
-jest.mock('../openAiClient/openAiClient.service');
-jest.mock('../geocoding/geocoding.service');
-jest.mock('../imageUpload/imageUpload.service');
+jest.mock('utils/openAiClient/openAiClient.service');
+jest.mock('utils/geocoding/geocoding.service');
+jest.mock('utils/imageUpload/imageUpload.service');
 
 const mockLibraryDto = {
   lat: 52.52,

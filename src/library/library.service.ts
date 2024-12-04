@@ -3,7 +3,7 @@ import { CreateLibraryDto } from './dto/create-library.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Library } from './entities/library.entity';
 import { User } from '@prisma/client';
-import haversineDistance from '../utils/haversineDistance';
+import haversineDistance from 'utils/haversineDistance';
 import { OpenAIClientService } from '../openAiClient/openAiClient.service';
 import { GeocodingService } from '../geocoding/geocoding.service';
 import { ImageUploadService } from '../imageUpload/imageUpload.service';

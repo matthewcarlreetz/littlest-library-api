@@ -1,6 +1,6 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AddressComponents } from '../geocoding/geocoding.service';
+import { AddressComponents } from 'utils/geocoding/geocoding.service';
 
 @Injectable()
 export class ImageUploadService {

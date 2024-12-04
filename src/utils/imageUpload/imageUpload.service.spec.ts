@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ImageUploadService } from './imageUpload.service';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { AddressComponents } from '../geocoding/geocoding.service';
+import { AddressComponents } from 'utils/geocoding/geocoding.service';
 
 jest.mock('@aws-sdk/client-s3');
 

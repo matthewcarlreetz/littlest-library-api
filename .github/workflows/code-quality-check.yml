@@ -1,0 +1,38 @@
+name: Code Quality Check
+
+on:
+  push:
+
+jobs:
+  code-quality-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.2.0
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: yarn
+
+      # Run lint
+      - name: Run Linter
+        run: yarn lint
+
+      # Run tests
+      - name: Run Tests
+        env:
+          NODE_ENV: test
+        run: yarn test
+
+      # Generate a summary of results
+      - name: Test and Lint Results Summary
+        if: always()
+        run: echo "Linting and testing completed."

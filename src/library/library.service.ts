@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateLibraryDto } from './dto/create-library.dto';
-import { UpdateLibraryDto } from './dto/update-library.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Library } from './entities/library.entity';
 import { User } from '@prisma/client';

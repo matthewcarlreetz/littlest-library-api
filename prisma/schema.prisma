@@ -8,20 +8,35 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  libraries Library[]
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  password       String
+  libraries      Library[]
+  LibraryContent LibraryContent[]
 }
 
 model Library {
-  id       String  @id @default(uuid())
-  street   String
-  state    String
-  zip      String
-  lat      Decimal
-  lng      Decimal
-  status   String  @default("new")
-  author   User?   @relation(fields: [authorId], references: [id])
-  authorId Int?
+  id             String           @id @default(uuid())
+  lat            Decimal
+  lng            Decimal
+  creator        User             @relation(fields: [creatorId], references: [id])
+  creatorId      Int
+  LibraryContent LibraryContent[]
+}
+
+model LibraryContent {
+  id          Int      @id @default(autoincrement())
+  library     Library  @relation(fields: [libraryId], references: [id])
+  libraryId   String
+  status      String   @default("new")
+  description String
+  imageUrl    String
+  street      String
+  state       String
+  city        String
+  zip         String
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 }

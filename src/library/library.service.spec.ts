@@ -4,7 +4,7 @@ import { PrismaService } from 'utils/prisma/prisma.service';
 import { OpenAIClientService } from 'utils/openAiClient/openAiClient.service';
 import { GeocodingService } from 'utils/geocoding/geocoding.service';
 import { ImageUploadService } from 'utils/imageUpload/imageUpload.service';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Library, Prisma, PrismaClient } from '@prisma/client';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 
 jest.mock('utils/openAiClient/openAiClient.service');
@@ -165,6 +165,125 @@ describe('LibraryService', () => {
 
       expect(result).toBeDefined();
       expect(result.id).toEqual('new-library-id');
+    });
+  });
+
+  describe('findNearby', () => {
+    it('should return libraries within the specified radius', async () => {
+      prisma.library.findMany.mockResolvedValue([
+        {
+          id: 'library1',
+          lat: new Prisma.Decimal(52.52),
+          lng: new Prisma.Decimal(13.405),
+          creatorId: 1,
+          LibraryContent: [
+            {
+              status: 'approved',
+              description: 'A nearby library',
+              imageUrl: 'http://image1.com',
+              street: '456 Distant St',
+              city: 'Distant City',
+              state: 'Distant State',
+              zip: '45678',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              authorId: 1,
+            },
+          ],
+        } as Library,
+      ]);
+
+      const result = await libraryService.findNearby({
+        lat: 52.52,
+        lng: 13.405,
+        radiusInMiles: 30,
+      });
+
+      expect(result).toBeDefined();
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(
+        expect.objectContaining({
+          id: 'library1',
+          description: 'A nearby library',
+          distanceInMiles: expect.any(Number),
+        }),
+      );
+      expect(prisma.library.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            lat: {
+              gte: expect.any(Number),
+              lte: expect.any(Number),
+            },
+            lng: {
+              gte: expect.any(Number),
+              lte: expect.any(Number),
+            },
+          },
+          include: {
+            LibraryContent: expect.any(Object),
+          },
+        }),
+      );
+    });
+
+    it('should exclude libraries outside the radius', async () => {
+      prisma.library.findMany.mockResolvedValue([
+        {
+          id: 'library1',
+          lat: new Prisma.Decimal(53.0),
+          lng: new Prisma.Decimal(14.0),
+          creatorId: 1,
+          LibraryContent: [
+            {
+              status: 'approved',
+              description: 'An out-of-radius library',
+              imageUrl: 'http://image1.com',
+              street: '456 Distant St',
+              city: 'Distant City',
+              state: 'Distant State',
+              zip: '45678',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              authorId: 1,
+            },
+          ],
+        } as Library,
+      ]);
+
+      const result = await libraryService.findNearby({
+        lat: 52.52,
+        lng: 13.405,
+        radiusInMiles: 30,
+      });
+
+      expect(result).toBeDefined();
+      expect(result).toHaveLength(0);
+    });
+
+    it('should handle no libraries found gracefully', async () => {
+      prisma.library.findMany.mockResolvedValue([]);
+
+      const result = await libraryService.findNearby({
+        lat: 52.52,
+        lng: 13.405,
+        radiusInMiles: 30,
+      });
+
+      expect(result).toBeDefined();
+      expect(result).toHaveLength(0);
+    });
+
+    it('should throw an error if Prisma query fails', async () => {
+      prisma.library.findMany.mockRejectedValue(new Error('Prisma error'));
+
+      await expect(
+        libraryService.findNearby({
+          lat: 52.52,
+          lng: 13.405,
+          radiusInMiles: 30,
+        }),
+      ).rejects.toThrow('Prisma error');
     });
   });
 });

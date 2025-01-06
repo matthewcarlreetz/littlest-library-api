@@ -24,6 +24,7 @@ CREATE TABLE "LibraryContent" (
     "status" TEXT NOT NULL DEFAULT 'new',
     "description" TEXT NOT NULL,
     "imageUrl" TEXT NOT NULL,
+    "thumbnailUrl" TEXT NOT NULL,
     "street" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "city" TEXT NOT NULL,

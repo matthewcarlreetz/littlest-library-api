@@ -62,10 +62,7 @@ export class LibraryService {
       lng: library.lng,
     });
 
-    const imageUrl = await this.imageUpload.uploadImage(
-      image,
-      addressComponents,
-    );
+    const images = await this.imageUpload.uploadImage(image, addressComponents);
 
     const createdLibrary = await this.prisma.library.create({
       data: {
@@ -79,7 +76,8 @@ export class LibraryService {
       data: {
         libraryId: createdLibrary.id,
         description,
-        imageUrl,
+        imageUrl: images.original,
+        thumbnailUrl: images.thumbnail,
         street: addressComponents?.street,
         state: addressComponents?.state,
         city: addressComponents?.city,

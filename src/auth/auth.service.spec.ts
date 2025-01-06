@@ -7,6 +7,11 @@ import { BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterRequestDto } from './dtos/register-request.dto';
 
+jest.mock('bcrypt', () => ({
+  compareSync: jest.fn(),
+  hash: jest.fn(),
+}));
+
 describe('AuthService', () => {
   let authService: AuthService;
   let jwtService: JwtService;
@@ -77,7 +82,7 @@ describe('AuthService', () => {
         password: 'hashedPassword',
       };
       jest.spyOn(userService, 'findOneByEmail').mockResolvedValue(user);
-      jest.spyOn(bcrypt, 'compareSync').mockReturnValue(true);
+      (bcrypt.compareSync as jest.Mock).mockReturnValue(true);
 
       const result = await authService.validateUser(user.email, 'password');
 
@@ -99,7 +104,7 @@ describe('AuthService', () => {
         password: 'hashedPassword',
       };
       jest.spyOn(userService, 'findOneByEmail').mockResolvedValue(user);
-      jest.spyOn(bcrypt, 'compareSync').mockReturnValue(false);
+      (bcrypt.compareSync as jest.Mock).mockReturnValue(false);
 
       await expect(
         authService.validateUser(user.email, 'wrongPassword'),
@@ -120,7 +125,7 @@ describe('AuthService', () => {
       };
       const token = 'accessToken';
       jest.spyOn(userService, 'findOneByEmail').mockResolvedValue(null);
-      jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword');
+      (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
       jest.spyOn(userService, 'createUser').mockResolvedValue(user);
       jest.spyOn(jwtService, 'sign').mockReturnValue(token);
 

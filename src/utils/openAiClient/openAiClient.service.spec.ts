@@ -3,17 +3,18 @@ import { OpenAIClientService } from './openAiClient.service';
 
 const mockCreate = jest.fn();
 
-jest.mock('openai', () => {
-  return {
-    default: jest.fn().mockImplementation(() => ({
+jest.mock('openai', () => ({
+  __esModule: true,
+  default: function () {
+    return {
       chat: {
         completions: {
           create: mockCreate,
         },
       },
-    })),
-  };
-});
+    };
+  },
+}));
 
 describe('OpenAIClientService', () => {
   let openAiClientService: OpenAIClientService;

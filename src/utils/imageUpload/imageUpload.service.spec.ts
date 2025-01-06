@@ -64,12 +64,16 @@ describe('ImageUploadService', () => {
     it('should return the uploaded file URL on successful upload', async () => {
       mockS3Client.send.mockResolvedValueOnce({});
 
+      jest
+        .spyOn(imageUploadService as any, 'createThumbnail')
+        .mockResolvedValueOnce(mockFile.buffer);
+
       const result = await imageUploadService.uploadImage(
         mockFile,
         mockAddress,
       );
 
-      expect(result).toContain(
+      expect(result.original).toContain(
         `https://${mockBucketName}.s3.${mockRegion}.amazonaws.com`,
       );
       expect(mockS3Client.send).toHaveBeenCalledWith(

@@ -1,6 +1,7 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AddressComponents } from 'utils/geocoding/geocoding.service';
+import sharp from 'sharp';
 
 @Injectable()
 export class ImageUploadService {
@@ -28,24 +29,56 @@ export class ImageUploadService {
   async uploadImage(
     file: Express.Multer.File,
     address: AddressComponents,
-  ): Promise<string> {
-    const name = `${address.city}-${address.state}-${address.zip}-${Date.now()}`;
+  ): Promise<{ original: string; thumbnail: string }> {
+    const timestamp = Date.now();
+    const baseName = `${address.city}-${address.state}-${address.zip}-${timestamp}`;
+    const thumbnailName = `${baseName}-thumbnail`;
+
     try {
-      const command = new PutObjectCommand({
+      // Upload original image
+      const originalCommand = new PutObjectCommand({
         Bucket: this.bucketName,
-        Key: name,
+        Key: baseName,
         Body: file.buffer,
         ContentType: file.mimetype,
       });
 
-      await this.s3Client.send(command);
+      // Create and upload thumbnail
+      const thumbnailBuffer = await this.createThumbnail(file.buffer);
+      const thumbnailCommand = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: thumbnailName,
+        Body: thumbnailBuffer,
+        ContentType: file.mimetype,
+      });
 
-      return `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${name}`;
+      await Promise.all([
+        this.s3Client.send(originalCommand),
+        this.s3Client.send(thumbnailCommand),
+      ]);
+
+      return {
+        original: `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${baseName}`,
+        thumbnail: `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${thumbnailName}`,
+      };
     } catch (error) {
       throw new HttpException(
         error.message || 'Failed to upload image',
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  private async createThumbnail(buffer: Buffer): Promise<Buffer> {
+    return sharp(buffer)
+      .resize(300, 300, {
+        fit: 'cover',
+        position: 'center',
+      })
+      .jpeg({
+        quality: 80,
+        progressive: true,
+      })
+      .toBuffer();
   }
 }
